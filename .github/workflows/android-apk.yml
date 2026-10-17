@@ -8,8 +8,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up Java
@@ -18,23 +21,66 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v4
-        with:
-          packages: 'platform-tools'
-
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
 
-      - name: Build Android APK
+      - name: Restore Android project structure
         shell: bash
         run: |
-          if [ -f gradlew ]; then
-            chmod +x gradlew
-            ./gradlew assembleDebug --no-daemon
-          else
-            gradle assembleDebug --no-daemon
+          set -e
+
+          mkdir -p app/src/main/assets
+          mkdir -p app/src/main/java/kr/bar/calculator
+          mkdir -p app/src/main/res/mipmap-mdpi
+          mkdir -p app/src/main/res/mipmap-hdpi
+          mkdir -p app/src/main/res/mipmap-xhdpi
+          mkdir -p app/src/main/res/mipmap-xxhdpi
+          mkdir -p app/src/main/res/mipmap-xxxhdpi
+
+          cp AndroidManifest.xml app/src/main/
+          cp MainActivity.java app/src/main/java/kr/bar/calculator/
+          cp index.html app.js style.css app/src/main/assets/
+
+          if [ ! -f app/build.gradle ]; then
+            cat > app/build.gradle <<'EOF'
+          plugins {
+              id 'com.android.application'
+          }
+
+          android {
+              namespace 'kr.bar.calculator'
+              compileSdk 35
+
+              defaultConfig {
+                  applicationId 'kr.bar.calculator'
+                  minSdk 24
+                  targetSdk 28
+                  versionCode 1
+                  versionName '1.0.0'
+              }
+
+              compileOptions {
+                  sourceCompatibility JavaVersion.VERSION_17
+                  targetCompatibility JavaVersion.VERSION_17
+              }
+          }
+          EOF
           fi
+
+          for density in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
+            cp ic_launcher.png \
+              "app/src/main/res/mipmap-${density}/ic_launcher.png"
+          done
+
+          echo "Android project files prepared"
+          find app/src/main -type f
+
+      - name: Build APK
+        shell: bash
+        run: |
+          gradle :app:assembleDebug --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
