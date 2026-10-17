@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ko"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self' data:; manifest-src 'self'; worker-src 'self'">
+<title>BAR 생산 계산기</title>
+<meta name="theme-color" content="#f5f7fb">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="BAR 계산기">
+
+
+<link rel="stylesheet" href="style.css">
+</head><body>
+<main class="wrap">
+  <div class="offline-note" role="note">인터넷 연결 없이 작동하는 Android 전용 계산기입니다.</div>
+  <header><div class="logo">B<span>▥</span></div><div><div class="eyebrow">PRODUCTION TOOLS / v1.0</div><h1>BAR 생산 계산기</h1><p>시트 조합부터 생산 결과까지, 빠르고 정확하게.</p></div></header>
+  <section class="panel"><div class="section-head"><h2>생산 조건</h2><span class="pill">입력 즉시 자동 계산</span></div>
+    <div class="inputs">
+      <label>전체 보유 시트 수 <input type="number" id="sheets" min="0" step="1" value="1500" inputmode="numeric"></label>
+      <label>1BAR 전체 층수 <input type="number" id="layers" value="63" disabled></label>
+      <label>1BAR의 S2 개수 <input type="number" id="s2" min="0" step="1" value="10" inputmode="numeric"></label>
+      <label>1BAR의 S3 개수 <input type="number" id="s3" min="0" step="1" value="53" inputmode="numeric"></label>
+    </div><p class="error" id="error" role="alert" hidden>올바른 값을 입력해주세요.</p>
+  </section>
+  <section class="panel"><div class="section-head"><h2>생산 결과</h2><span class="pill neutral" id="perbar-label">1BAR = 179시트</span></div>
+    <div class="hero"><div><span>생산 가능한 완성 BAR</span><small>완성 단위만 계산</small></div><strong id="bars">8 <em>BAR</em></strong></div>
+    <div class="metrics">
+      <div class="metric"><span>S2 총생산량</span><strong><b id="totalS2">80</b><em>개</em></strong><small id="s2used">160시트 사용</small></div>
+      <div class="metric"><span>S3 총생산량</span><strong><b id="totalS3">424</b><em>개</em></strong><small id="s3used">1,272시트 사용</small></div>
+      <div class="metric"><span>1BAR 필요 시트</span><strong><b id="perBar">179</b><em>개</em></strong></div>
+      <div class="metric"><span>완성된 총 층수</span><strong><b id="totalLayers">504</b><em>층</em></strong></div>
+    </div>
+  </section>
+  <section class="panel"><div class="section-head"><h2>시트 사용 현황</h2><span class="pill neutral" id="verified">검산 완료</span></div>
+    <div class="totals"><div><span>전체 시트</span><b id="all">1,500개</b></div><div><span>사용 시트</span><b id="used">1,432개</b></div><div><span>잔여 시트</span><b class="orange" id="remaining">68개</b></div></div>
+    <div class="barbg"><div id="progress" class="barfill"></div></div><div class="percent"><span>시트 사용률</span><strong id="pct">95.5%</strong></div>
+    <div class="actions"><button id="reset" class="secondary">초기화</button><button id="copy" class="primary">계산 결과 복사</button></div>
+    <p class="footnote">완성된 BAR만 계산합니다. 잔여 시트는 별도 보관하며, 공정 손실과 불량은 반영하지 않습니다.</p>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </section>
+</main><script src="app.js"></script>
+</body></html>
